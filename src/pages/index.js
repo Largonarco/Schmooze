@@ -1,54 +1,91 @@
+import Sidebar from "../components/Sidebar";
+import Posts from "../components/Posts";
+import { splitArrayby10 } from "../../utils";
+import { useEffect, useRef, useState } from "react";
+import { db } from "../../config";
 import {
-  Link as ChakraLink,
-  Text,
-  Code,
-  List,
-  ListIcon,
-  ListItem,
-} from '@chakra-ui/react'
-import { CheckCircleIcon, LinkIcon } from '@chakra-ui/icons'
-import { Hero } from '../components/Hero'
-import { Container } from '../components/Container'
-import { Main } from '../components/Main'
-import { DarkModeSwitch } from '../components/DarkModeSwitch'
-import { CTA } from '../components/CTA'
-import { Footer } from '../components/Footer'
+  collection,
+  getDocs,
+  limit,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 
-const Index = () => (
-  <Container height="100vh">
-    <Hero />
-    <Main>
-      <Text>
-        Example repository of <Code>Next.js</Code> + <Code>chakra-ui</Code>.
-      </Text>
+import {
+  Box,
+  Flex,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseButton,
+} from "@chakra-ui/react";
 
-      <List spacing={3} my={0}>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          <ChakraLink
-            isExternal
-            href="https://chakra-ui.com"
-            flexGrow={1}
-            mr={2}
-          >
-            Chakra UI <LinkIcon />
-          </ChakraLink>
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          <ChakraLink isExternal href="https://nextjs.org" flexGrow={1} mr={2}>
-            Next.js <LinkIcon />
-          </ChakraLink>
-        </ListItem>
-      </List>
-    </Main>
+const index = ({ user, isOpen, onClose }) => {
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
 
-    <DarkModeSwitch />
-    <Footer>
-      <Text>Next ❤️ Chakra</Text>
-    </Footer>
-    <CTA />
-  </Container>
-)
+  useEffect(() => {
+    const postsRef = collection(db, "posts");
 
-export default Index
+    if (user && user.following != []) {
+      const usernames = splitArrayby10(user.following);
+      usernames.forEach((set) => {
+        const q = query(
+          postsRef,
+          where("author", "in", set),
+          where("createdAt", ">", {
+            seconds: Timestamp.now().seconds - 172800,
+            nanoseconds: Timestamp.now().nanoseconds,
+          })
+        );
+        getDocs(q)
+          .then((data) => {
+            data.docs.forEach((post) => {
+              setPosts([...posts, { ...post.data(), id: post.id }]);
+            });
+          })
+          .catch((err) => setError(err.message));
+      });
+    } else {
+      const q = query(postsRef, limit(500));
+      getDocs(q)
+        .then((data) => {
+          data.docs.forEach((post) => {
+            setPosts([...posts, { ...post.data(), id: post.id }]);
+          });
+        })
+        .catch((err) => setError(err.message));
+    }
+  }, []);
+
+  return (
+    <Flex minH="85vh" direction="row" gap="1em">
+      <Flex
+        px="1em"
+        flex={1}
+        direction="column"
+        display={{ base: "none", lg: "flex" }}
+      >
+        <Sidebar user={user} />
+      </Flex>
+
+      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
+        <DrawerOverlay />
+        <DrawerContent bgColor="gray.700">
+          <DrawerCloseButton color="white" />
+          <DrawerHeader textColor="white">User controls</DrawerHeader>
+          <DrawerBody>
+            <Sidebar user={user} />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
+      <Posts posts={posts} />
+    </Flex>
+  );
+};
+
+export default index;
