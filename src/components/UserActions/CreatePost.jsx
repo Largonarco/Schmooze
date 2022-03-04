@@ -1,10 +1,15 @@
-import Logout from "./Logout";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useState, useRef } from "react";
-import { db } from "../../config";
+import { db, storage } from "../../../config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 
 import {
-  Flex,
   VStack,
   Modal,
   ModalOverlay,
@@ -15,19 +20,27 @@ import {
   ModalCloseButton,
   Input,
   Textarea,
-  Text,
   Button,
   Alert,
   AlertIcon,
+  MenuItem,
 } from "@chakra-ui/react";
 
-const UserActions = ({ user }) => {
+const CreatePost = ({ user }) => {
   const [toggle, setToggle] = useState(false);
-  const [post, setPost] = useState({ title: null, body: null, tag: null });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [post, setPost] = useState({
+    title: null,
+    body: null,
+    tag: null,
+  });
 
   const submitPost = async (e) => {
     e.preventDefault();
+
+    setLoading(!loading);
+    setError(null);
 
     addDoc(collection(db, "posts"), {
       ...post,
@@ -36,7 +49,28 @@ const UserActions = ({ user }) => {
       comments: [],
       author: user.username,
     })
-      .then(setToggle(!toggle))
+      .then((document) => {
+        if (post.file.type == "image/jpeg" || "image/jpg" || "image/png") {
+          const uploadTask = uploadBytesResumable(
+            ref(storage, `images/${document.id}`),
+            post.file
+          );
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {},
+            (error) => setError(error.message),
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                updateDoc(doc(db, "posts", document.id), {
+                  file: downloadURL,
+                });
+              });
+              setLoading(!loading);
+              setToggle(!toggle);
+            }
+          );
+        }
+      })
       .catch((err) => setError(err.message));
   };
 
@@ -47,18 +81,16 @@ const UserActions = ({ user }) => {
   const focusRef = useRef();
 
   return (
-    <Flex direction="column" gap="1em">
-      <Text as="h2" fontSize="1.5em" fontWeight="semibold" textColor="white">
-        {user.username}
-      </Text>
-
-      <Button
-        variant="solid"
-        colorScheme="purple"
+    <>
+      <MenuItem
+        bgColor="gray.700"
+        textColor="white"
+        _hover={{ bgColor: "gray.800" }}
+        _focus={{ bgColor: "gray.700" }}
         onClick={() => setToggle(!toggle)}
       >
         Create post
-      </Button>
+      </MenuItem>
 
       <Modal
         initialFocusRef={focusRef}
@@ -68,9 +100,9 @@ const UserActions = ({ user }) => {
         blockScrollOnMount
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create a post</ModalHeader>
-          <ModalCloseButton />
+        <ModalContent bgColor="gray.800">
+          <ModalHeader textColor="white">Create a post</ModalHeader>
+          <ModalCloseButton color="white" />
           <ModalBody>
             <VStack spacing="1em">
               <Input
@@ -88,7 +120,6 @@ const UserActions = ({ user }) => {
                 placeholder="Post body"
                 onChange={(e) => onChange(e)}
                 textColor="white"
-                size="sm"
               />
               <Input
                 type="text"
@@ -105,9 +136,9 @@ const UserActions = ({ user }) => {
               ) : null}
             </VStack>
           </ModalBody>
-
           <ModalFooter>
             <Button
+              isLoading={loading}
               isDisabled={post.title && post.body && post.tag ? false : true}
               variant="solid"
               colorScheme="brand"
@@ -118,10 +149,8 @@ const UserActions = ({ user }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-      <Logout />
-    </Flex>
+    </>
   );
 };
 
-export default UserActions;
+export default CreatePost;

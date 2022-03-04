@@ -4,14 +4,13 @@ import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
 import { auth, db } from "../../config";
 
-import { useDisclosure, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 const Layout = ({ children }) => {
-  const [userData, setUserData] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [userData, setUserData] = useState("unknown");
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         const q = query(
           collection(db, "users"),
@@ -25,16 +24,16 @@ const Layout = ({ children }) => {
         setUserData(user);
       }
     });
+
+    return () => {
+      unsubAuth();
+    };
   }, []);
 
   return (
-    <Flex p="1em" gap="2em" direction="column" bgColor="gray.900">
-      <Navbar onOpen={onOpen} />
-      {React.cloneElement(children, {
-        user: userData,
-        isOpen,
-        onClose,
-      })}
+    <Flex direction="column" bgColor="gray.900">
+      <Navbar user={userData} />
+      {React.cloneElement(children, { user: userData })}
     </Flex>
   );
 };

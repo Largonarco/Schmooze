@@ -1,28 +1,71 @@
-import { Flex, IconButton, Text } from "@chakra-ui/react";
-import { FiMenu } from "react-icons/fi";
+import UserDropdown from "./UserActions/UserDropdown";
+import Sidebar from "./Sidebar";
+import Login from "./Auth/Login";
+import SignUp from "./Auth/SignUp";
+import { useState } from "react";
 
-const Navbar = ({ onOpen }) => {
+import { FiMenu } from "react-icons/fi";
+import {
+  useDisclosure,
+  HStack,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseButton,
+  Button,
+  Heading,
+  Flex,
+} from "@chakra-ui/react";
+
+const Navbar = ({ user }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loginToggle, setLoginToggle] = useState(false);
+  const [signUpToggle, setSignUpToggle] = useState(false);
+
   return (
     <Flex
-      px="1em"
-      gap="1em"
       height="10vh"
-      direction="row"
-      alignItems="center"
-      bgColor="gray.700"
-      borderRadius="0.5em"
+      width="100%"
+      px={{ base: "1em", lg: "15vw" }}
+      position="fixed"
+      zIndex={50}
+      justify="space-between"
+      align="center"
+      bgColor="gray.800"
+      borderBottom="1px"
+      borderColor="purple.900"
     >
-      <IconButton
-        display={{ lg: "none" }}
-        icon={<FiMenu />}
-        size="md"
-        onClick={onOpen}
-        aria-label="Menu"
-      />
+      <Button display={{ lg: "none" }} onClick={onOpen}>
+        <FiMenu />
+      </Button>
 
-      <Text as="h1" fontSize="2em" fontWeight={800} textColor="white">
+      <Heading as="h1" size="lg" fontWeight="bold" textColor="white">
         Schmooze
-      </Text>
+      </Heading>
+
+      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
+        <DrawerOverlay />
+        <DrawerContent bgColor="gray.700">
+          <DrawerCloseButton color="white" />
+          <DrawerHeader textColor="white">Schmooze</DrawerHeader>
+          <DrawerBody>
+            <Sidebar user={user} />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
+      <HStack spacing="1em">
+        {user && !loginToggle && !signUpToggle ? (
+          <UserDropdown user={user} />
+        ) : (
+          <>
+            <Login toggle={signUpToggle} setToggle={setSignUpToggle} />
+            <SignUp toggle={loginToggle} setToggle={setLoginToggle} />
+          </>
+        )}
+      </HStack>
     </Flex>
   );
 };

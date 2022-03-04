@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { auth } from "../../config";
+import { auth } from "../../../config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 import {
@@ -29,6 +29,7 @@ const Login = ({ toggle, setToggle }) => {
   const login = (e) => {
     e.preventDefault();
 
+    setError(null);
     signInWithEmailAndPassword(auth, credentials.email, credentials.password)
       .then(setToggle(!toggle))
       .catch((err) => setError(err.message));

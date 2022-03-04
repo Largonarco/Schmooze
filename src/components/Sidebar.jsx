@@ -1,24 +1,27 @@
-import UserActions from "./UserActions";
-import Login from "./Login";
-import SignUp from "./SignUp";
-import { useState } from "react";
+import { Flex, Heading, Text, Button } from "@chakra-ui/react";
 
-import { Flex } from "@chakra-ui/react";
-
-const Sidebar = ({ user }) => {
-  const [loginToggle, setLoginToggle] = useState(false);
-  const [signUpToggle, setSignUpToggle] = useState(false);
-
+const Sidebar = ({ tags }) => {
   return (
-    <Flex direction="column" gap="1em">
-      {user && !loginToggle && !signUpToggle ? (
-        <UserActions user={user} />
-      ) : (
-        <>
-          <SignUp toggle={loginToggle} setToggle={setLoginToggle} />
-          <Login toggle={signUpToggle} setToggle={setSignUpToggle} />
-        </>
-      )}
+    <Flex
+      display={{ base: "none", lg: "flex" }}
+      flex={1}
+      direction="column"
+      gap="1em"
+    >
+      <Heading size="md" textColor="white">
+        Tags
+      </Heading>
+
+      {tags.map((tag) => (
+        <Button
+          _hover={{ bgColor: "gray.700" }}
+          _active={{ bgColor: "gray.700" }}
+          variant="outline"
+          colorScheme="purple"
+        >
+          <Text fontSize="md">#{tag}</Text>
+        </Button>
+      ))}
     </Flex>
   );
 };
