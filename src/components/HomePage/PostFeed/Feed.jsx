@@ -11,7 +11,7 @@ const PostFeed = ({ posts }) => {
       gap="1em"
       overflowY="auto"
     >
-      <Heading as="h2" fontSize="lg" textColor="white">
+      <Heading fontSize="lg" textColor="white">
         Posts
       </Heading>
 

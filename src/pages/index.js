@@ -14,7 +14,7 @@ import {
 
 import { Flex } from "@chakra-ui/react";
 
-const index = ({ user }) => {
+const index = ({ primaryUser }) => {
   const [posts, setPosts] = useState([]);
   const [tags, setTags] = useState([]);
   const [error, setError] = useState(null);
@@ -22,9 +22,9 @@ const index = ({ user }) => {
   useEffect(() => {
     const postsRef = collection(db, "posts");
 
-    if (user != "unknown") {
-      if (user && user.following.length != 0) {
-        const usernameSet = splitArrayby10(user.following);
+    if (primaryUser != "unknown") {
+      if (primaryUser && primaryUser.following.length != 0) {
+        const usernameSet = splitArrayby10(primaryUser.following);
 
         usernameSet.forEach((username) => {
           const q = query(
@@ -38,14 +38,16 @@ const index = ({ user }) => {
 
           getDocs(q)
             .then((data) => {
+              setPosts([]);
+              setTags([]);
+
               data.docs.forEach((postDoc) => {
-                const post = postDoc.data();
                 setPosts((prevData) => [
                   ...prevData,
-                  { ...post, id: postDoc.id },
+                  { ...postDoc.data(), id: postDoc.id },
                 ]);
-                !tags.includes(post.tag)
-                  ? setTags((prevData) => [...prevData, post.tag])
+                !tags.includes(postDoc.data().tag)
+                  ? setTags((prevData) => [...prevData, postDoc.data().tag])
                   : null;
               });
             })
@@ -56,25 +58,27 @@ const index = ({ user }) => {
 
         getDocs(q)
           .then((data) => {
+            setPosts([]);
+            setTags([]);
+
             data.docs.forEach((postDoc) => {
-              const post = postDoc.data();
               setPosts((prevData) => [
                 ...prevData,
-                { ...post, id: postDoc.id },
+                { ...postDoc.data(), id: postDoc.id },
               ]);
-              !tags.includes(post.tag)
-                ? setTags((prevData) => [...prevData, post.tag])
+              !tags.includes(postDoc.data().tag)
+                ? setTags((prevData) => [...prevData, postDoc.data().tag])
                 : null;
             });
           })
           .catch((err) => setError(err.message));
       }
     }
-  }, [user]);
+  }, [primaryUser]);
 
   return (
     <Flex direction="column" bgColor="gray.900">
-      <HomeNavbar user={user} tags={tags}/>
+      <HomeNavbar primaryUser={primaryUser} tags={tags} />
       <HomePage posts={posts} tags={tags} error={error} />
     </Flex>
   );

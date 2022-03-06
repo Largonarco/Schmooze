@@ -7,10 +7,12 @@ import {
   serverTimestamp,
   updateDoc,
   doc,
+  arrayUnion,
 } from "firebase/firestore";
 
 import {
   VStack,
+  MenuItem,
   Modal,
   ModalOverlay,
   ModalHeader,
@@ -23,10 +25,10 @@ import {
   Button,
   Alert,
   AlertIcon,
-  MenuItem,
 } from "@chakra-ui/react";
 
-const CreatePost = ({ user }) => {
+const CreatePost = ({ primaryUser }) => {
+  const focusRef = useRef();
   const [toggle, setToggle] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,36 +36,44 @@ const CreatePost = ({ user }) => {
     title: null,
     body: null,
     tag: null,
+    file: "",
   });
 
   const submitPost = async (e) => {
     e.preventDefault();
 
-    setLoading(!loading);
     setError(null);
+    setLoading(!loading);
 
     addDoc(collection(db, "posts"), {
-      ...post,
+      title: post.title,
+      body: post.body,
+      tag: post.tag,
       likes: 0,
       createdAt: serverTimestamp(),
       comments: [],
-      author: user.username,
+      author: primaryUser.username,
     })
-      .then((document) => {
+      .then((uploadedPost) => {
         if (post.file.type == "image/jpeg" || "image/jpg" || "image/png") {
           const uploadTask = uploadBytesResumable(
-            ref(storage, `images/${document.id}`),
+            ref(storage, `images/${uploadedPost.id}`),
             post.file
           );
           uploadTask.on(
             "state_changed",
             (snapshot) => {},
             (error) => setError(error.message),
-            () => {
-              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                updateDoc(doc(db, "posts", document.id), {
-                  file: downloadURL,
-                });
+            async () => {
+              getDownloadURL(ref(storage, `images/${uploadedPost.id}`)).then(
+                (url) => {
+                  updateDoc(uploadedPost, {
+                    file: url,
+                  });
+                }
+              );
+              await updateDoc(doc(db, "users", primaryUser.username), {
+                posts: arrayUnion(uploadedPost.id),
               });
               setLoading(!loading);
               setToggle(!toggle);
@@ -75,10 +85,10 @@ const CreatePost = ({ user }) => {
   };
 
   const onChange = (e) => {
-    setPost({ ...post, [e.target.name]: e.target.value });
+    e.target.files
+      ? setPost({ ...post, [e.target.name]: e.target.files[0] })
+      : setPost({ ...post, [e.target.name]: e.target.value });
   };
-
-  const focusRef = useRef();
 
   return (
     <>
@@ -118,6 +128,12 @@ const CreatePost = ({ user }) => {
                 type="text"
                 name="body"
                 placeholder="Post body"
+                onChange={(e) => onChange(e)}
+                textColor="white"
+              />
+              <Input
+                type="file"
+                name="file"
                 onChange={(e) => onChange(e)}
                 textColor="white"
               />

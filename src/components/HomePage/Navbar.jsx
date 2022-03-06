@@ -1,7 +1,6 @@
 import UserDropdown from "../UserActions/UserDropdown";
 import GuestDropdown from "../GuestActions/GuestDropdown";
 import HomeSidebar from "./Sidebar";
-import { useState } from "react";
 
 import { FiMenu } from "react-icons/fi";
 import {
@@ -18,7 +17,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 
-const HomeNavbar = ({ user, tags }) => {
+const HomeNavbar = ({ primaryUser, tags }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -38,7 +37,7 @@ const HomeNavbar = ({ user, tags }) => {
         <FiMenu />
       </Button>
 
-      <Heading as="h1" size="lg" fontWeight="bold" textColor="white">
+      <Heading fontSize="3xl" textColor="whiteAlpha.800">
         Schmooze
       </Heading>
 
@@ -53,7 +52,11 @@ const HomeNavbar = ({ user, tags }) => {
         </DrawerContent>
       </Drawer>
 
-      {user ? <UserDropdown user={user} /> : <GuestDropdown />}
+      {primaryUser ? (
+        <UserDropdown primaryUser={primaryUser} />
+      ) : (
+        <GuestDropdown />
+      )}
     </Flex>
   );
 };

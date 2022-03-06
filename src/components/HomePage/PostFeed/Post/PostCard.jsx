@@ -1,3 +1,4 @@
+import moment from "moment";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -12,7 +13,7 @@ import {
   Tag,
   Badge,
 } from "@chakra-ui/react";
-import moment from "moment";
+
 
 const PostCard = ({ index, post }) => {
   return (
@@ -24,27 +25,28 @@ const PostCard = ({ index, post }) => {
           <HStack justify="space-between" align="center">
             <HStack spacing="0.5em">
               <VStack align="start" spacing={0} fontSize="sm">
-                <Text fontWeight="semibold" color="gray.500">
+                <Text fontWeight="semibold" textColor="gray.500">
                   {post.author}
                 </Text>
-                <Text color="gray.500">
+                <Text textColor="gray.500">
                   {moment(post.createdAt.toDate()).fromNow()}
                 </Text>
               </VStack>
             </HStack>
           </HStack>
-          <Heading textColor="white" fontSize="2xl" >
+
+          <Heading textColor="white" fontSize="xl">
             {post.title}
           </Heading>
 
           <HStack spacing="1em">
             <Tag size="md" gap="0.5em" bgColor="purple.900" variant="subtle">
               <AiOutlineHeart fill="pink" size={18} />
-              <Text textColor="gray.400">{post.likes} </Text>
+              <Text textColor="gray.500">{post.likes} </Text>
             </Tag>
             <Tag size="md" gap="0.5em" bgColor="purple.900" variant="subtle">
               <AiOutlineComment fill="green" size={18} />
-              <Text textColor="gray.400">{post.comments.length} </Text>
+              <Text textColor="gray.500">{post.comments.length} </Text>
             </Tag>
           </HStack>
         </Flex>

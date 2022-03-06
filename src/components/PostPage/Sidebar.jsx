@@ -1,4 +1,5 @@
-import { Flex, HStack, Avatar, Heading, Text } from "@chakra-ui/react";
+import { Flex, HStack, VStack, Avatar, Heading, Text } from "@chakra-ui/react";
+import { BsPeople, BsPencil } from "react-icons/bs";
 
 const PostSidebar = ({ display, postAuthor }) => {
   return (
@@ -21,7 +22,15 @@ const PostSidebar = ({ display, postAuthor }) => {
         </Heading>
 
         <HStack>
-          <Text> {postAuthor.followers.length} followers</Text>
+          <BsPeople fill="white" size={18} />
+          <Text textColor="gray.600">
+            {postAuthor.followers.length} followers
+          </Text>
+        </HStack>
+
+        <HStack>
+          <BsPencil fill="white" size={18} />
+          <Text textColor="gray.600">{postAuthor.posts.length} posts</Text>
         </HStack>
       </Flex>
     </Flex>

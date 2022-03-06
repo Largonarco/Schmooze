@@ -1,4 +1,7 @@
-import "@fontsource/montserrat"
+import "@fontsource/montserrat/200.css"
+import "@fontsource/montserrat/400.css"
+import "@fontsource/montserrat/600.css"
+import "@fontsource/montserrat/800.css"
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { query, getDocs, collection, where, limit } from "firebase/firestore";
@@ -8,7 +11,7 @@ import theme from "../../styles/theme";
 import { ChakraProvider } from "@chakra-ui/react";
 
 const MyApp = ({ Component, pageProps }) => {
-  const [user, setUser] = useState("unknown");
+  const [primaryUser, setPrimaryUser] = useState("unknown");
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (user) => {
@@ -19,10 +22,10 @@ const MyApp = ({ Component, pageProps }) => {
           limit(1)
         );
         getDocs(q).then((data) => {
-          setUser(data.docs[0].data());
+          setPrimaryUser(data.docs[0].data());
         });
       } else {
-        setUser(user);
+        setPrimaryUser(user);
       }
     });
 
@@ -33,7 +36,7 @@ const MyApp = ({ Component, pageProps }) => {
 
   return (
     <ChakraProvider theme={theme}>
-      <Component {...pageProps} user={user} />
+      <Component {...pageProps} primaryUser={primaryUser} />
     </ChakraProvider>
   );
 };

@@ -10,7 +10,7 @@ const HomePage = ({ tags, posts, error }) => {
       mt="10vh"
       px={{ base: "1em", lg: "15vw" }}
       py="2em"
-      gap="2em"
+      gap="1em"
     >
       <HomeSidebar display={{ base: "none", lg: "flex" }} tags={tags} />
 

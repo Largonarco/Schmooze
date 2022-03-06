@@ -16,7 +16,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 
-const PostNavbar = ({ user, postAuthor }) => {
+const PostNavbar = ({ primaryUser, postAuthor }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -54,7 +54,7 @@ const PostNavbar = ({ user, postAuthor }) => {
         </DrawerContent>
       </Drawer>
 
-      {user ? <UserDropdown user={user} /> : <GuestDropdown />}
+      {primaryUser ? <UserDropdown primaryUser={primaryUser} /> : <GuestDropdown />}
     </Flex>
   );
 };

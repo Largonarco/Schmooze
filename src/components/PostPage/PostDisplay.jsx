@@ -19,7 +19,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-const PostDisplay = ({ user, post }) => {
+const PostDisplay = ({ primaryUser, post }) => {
   const [liked, setLiked] = useState(false);
   const [userComment, setUserComment] = useState(null);
   const [newComments, setNewComments] = useState([]);
@@ -52,7 +52,7 @@ const PostDisplay = ({ user, post }) => {
 
   const onComment = async () => {
     await updateDoc(doc(db, "posts", post.id), {
-      comments: arrayUnion({ user: user.username, comment: userComment }),
+      comments: arrayUnion({ user: primaryUser.username, comment: userComment }),
     });
   };
 
@@ -69,11 +69,11 @@ const PostDisplay = ({ user, post }) => {
             <Text color="gray.500">{post.createdAt}</Text>
           </VStack>
 
-          <Heading as="h2" fontSize="2xl" textColor="white">
+          <Heading fontSize="2xl" textColor="white">
             {post.title}
           </Heading>
 
-          <Text fontSize="lg" textColor="whiteAlpha.800">
+          <Text fontSize="md" textColor="whiteAlpha.800">
             {post.body}
           </Text>
         </Flex>
@@ -119,14 +119,31 @@ const PostDisplay = ({ user, post }) => {
 
         {newComments.length != 0
           ? newComments.map(({ comment, user }) => (
-              <Flex p="0.5em" direction="column" bgColor="gray.800" rounded="md">
+              <Flex
+                p="0.5em"
+                direction="column"
+                bgColor="gray.800"
+                rounded="md"
+              >
                 <Text fontWeight="semibold" color="gray.500">
                   {user}
                 </Text>
                 <Text>{comment}</Text>
               </Flex>
             ))
-          : post.comments.map(({ comment, user }) => <Text>{comment}</Text>)}
+          : post.comments.map(({ comment, user }) => (
+              <Flex
+                p="0.5em"
+                direction="column"
+                bgColor="gray.800"
+                rounded="md"
+              >
+                <Text fontWeight="semibold" color="gray.500">
+                  {user}
+                </Text>
+                <Text>{comment}</Text>
+              </Flex>
+            ))}
       </Flex>
     </Flex>
   );

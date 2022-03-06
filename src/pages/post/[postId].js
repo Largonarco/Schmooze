@@ -3,15 +3,15 @@ import PostPage from "../../components/PostPage/Page";
 import moment from "moment";
 
 import { db } from "../../../config";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 import { Flex } from "@chakra-ui/react";
 
-const index = ({ user, post, postAuthor }) => {
+const index = ({ primaryUser, post, postAuthor }) => {
   return (
     <Flex direction="column" bgColor="gray.900">
-      <PostNavbar user={user} postAuthor={postAuthor} />
-      <PostPage user={user} post={post} postAuthor={postAuthor} />
+      <PostNavbar primaryUser={primaryUser} postAuthor={postAuthor} />
+      <PostPage primaryUser={primaryUser} post={post} postAuthor={postAuthor} />
     </Flex>
   );
 };
