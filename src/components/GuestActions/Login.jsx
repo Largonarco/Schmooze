@@ -15,9 +15,11 @@ import {
   Button,
   Alert,
   AlertIcon,
+  MenuItem,
 } from "@chakra-ui/react";
 
-const Login = ({ toggle, setToggle }) => {
+const Login = () => {
+  const [toggle, setToggle] = useState(false);
   const [error, setError] = useState(null);
   const [credentials, setCredentials] = useState({
     email: null,
@@ -41,13 +43,15 @@ const Login = ({ toggle, setToggle }) => {
 
   return (
     <>
-      <Button
-        variant="solid"
-        colorScheme="purple"
+      <MenuItem
+        bgColor="gray.700"
+        textColor="white"
+        _hover={{ bgColor: "gray.800" }}
+        _focus={{ bgColor: "gray.700" }}
         onClick={() => setToggle(!toggle)}
       >
         Log in
-      </Button>
+      </MenuItem>
 
       <Modal
         initialFocusRef={focusRef}

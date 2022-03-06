@@ -1,14 +1,14 @@
 import { Flex, Heading, Text, Button } from "@chakra-ui/react";
 
-const Sidebar = ({ tags }) => {
+const HomeSidebar = ({ tags, display }) => {
   return (
     <Flex
-      display={{ base: "none", lg: "flex" }}
+      display={display}
       flex={1}
       direction="column"
       gap="1em"
     >
-      <Heading size="md" textColor="white">
+      <Heading fontSize="lg" textColor="white">
         Tags
       </Heading>
 
@@ -26,4 +26,4 @@ const Sidebar = ({ tags }) => {
   );
 };
 
-export default Sidebar;
+export default HomeSidebar;

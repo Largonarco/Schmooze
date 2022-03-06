@@ -33,18 +33,18 @@ const PostCard = ({ index, post }) => {
               </VStack>
             </HStack>
           </HStack>
-          <Heading textColor="white" fontSize="2xl">
+          <Heading textColor="white" fontSize="2xl" >
             {post.title}
           </Heading>
 
           <HStack spacing="1em">
             <Tag size="md" gap="0.5em" bgColor="purple.900" variant="subtle">
               <AiOutlineHeart fill="pink" size={18} />
-              <Text textColor="gray.400">{post.likes} likes</Text>
+              <Text textColor="gray.400">{post.likes} </Text>
             </Tag>
             <Tag size="md" gap="0.5em" bgColor="purple.900" variant="subtle">
               <AiOutlineComment fill="green" size={18} />
-              <Text textColor="gray.400">{post.comments.length} comments</Text>
+              <Text textColor="gray.400">{post.comments.length} </Text>
             </Tag>
           </HStack>
         </Flex>

@@ -11,7 +11,7 @@ const PostFeed = ({ posts }) => {
       gap="1em"
       overflowY="auto"
     >
-      <Heading as="h2" size="md" textColor="white">
+      <Heading as="h2" fontSize="lg" textColor="white">
         Posts
       </Heading>
 
@@ -19,7 +19,6 @@ const PostFeed = ({ posts }) => {
         posts.map((post, index) => <PostCard post={post} index={index} />)
       ) : (
         <>
-          <PostSkeletonCard />
           <PostSkeletonCard />
           <PostSkeletonCard />
           <PostSkeletonCard />

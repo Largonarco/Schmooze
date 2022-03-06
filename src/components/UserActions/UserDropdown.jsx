@@ -1,8 +1,7 @@
-import React from "react";
-import Logout from "../Auth/Logout";
+import Logout from "./Logout";
 import CreatePost from "./CreatePost";
 
-import { Menu, MenuList, MenuButton, MenuItem, Avatar } from "@chakra-ui/react";
+import { Menu, MenuList, MenuButton, Avatar } from "@chakra-ui/react";
 
 const UserDropdown = ({ user }) => {
   return (
@@ -12,7 +11,7 @@ const UserDropdown = ({ user }) => {
       </MenuButton>
       <MenuList bgColor="gray.700">
         <CreatePost user={user} />
-        <Logout user={user} />
+        <Logout />
       </MenuList>
     </Menu>
   );

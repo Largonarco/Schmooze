@@ -16,9 +16,11 @@ import {
   Button,
   Alert,
   AlertIcon,
+  MenuItem,
 } from "@chakra-ui/react";
 
-const SignUp = ({ toggle, setToggle }) => {
+const SignUp = () => {
+  const [toggle, setToggle] = useState(false);
   const [error, setError] = useState(null);
   const [credentials, setCredentials] = useState({
     username: null,
@@ -62,13 +64,15 @@ const SignUp = ({ toggle, setToggle }) => {
 
   return (
     <>
-      <Button
-        variant="solid"
-        colorScheme="purple"
+      <MenuItem
+        bgColor="gray.700"
+        textColor="white"
+        _hover={{ bgColor: "gray.800" }}
+        _focus={{ bgColor: "gray.700" }}
         onClick={() => setToggle(!toggle)}
       >
         Sign up
-      </Button>
+      </MenuItem>
 
       <Modal
         initialFocusRef={focusRef}

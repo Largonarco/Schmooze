@@ -1,5 +1,5 @@
-import Sidebar from "../components/Sidebar";
-import PostFeed from "../components/PostFeed";
+import HomeNavbar from "../components/HomePage/Navbar";
+import HomePage from "../components/HomePage/Page";
 import { splitArrayby10 } from "../../utils";
 import { useEffect, useState } from "react";
 import { db } from "../../config";
@@ -73,22 +73,9 @@ const index = ({ user }) => {
   }, [user]);
 
   return (
-    <Flex
-      minH="100vh"
-      mt="10vh"
-      px={{ base: "1em", lg: "15vw" }}
-      py="2em"
-      gap="1em"
-    >
-      <Sidebar tags={tags} />
-
-      {!error ? (
-        <PostFeed posts={posts} />
-      ) : (
-        <Text fontSize="md" fontWeight="semibold">
-          Couldn't fetch posts
-        </Text>
-      )}
+    <Flex direction="column" bgColor="gray.900">
+      <HomeNavbar user={user} tags={tags}/>
+      <HomePage posts={posts} tags={tags} error={error} />
     </Flex>
   );
 };

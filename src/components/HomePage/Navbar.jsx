@@ -1,7 +1,6 @@
-import UserDropdown from "./UserActions/UserDropdown";
-import Sidebar from "./Sidebar";
-import Login from "./Auth/Login";
-import SignUp from "./Auth/SignUp";
+import UserDropdown from "../UserActions/UserDropdown";
+import GuestDropdown from "../GuestActions/GuestDropdown";
+import HomeSidebar from "./Sidebar";
 import { useState } from "react";
 
 import { FiMenu } from "react-icons/fi";
@@ -19,10 +18,8 @@ import {
   Flex,
 } from "@chakra-ui/react";
 
-const Navbar = ({ user }) => {
+const HomeNavbar = ({ user, tags }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [loginToggle, setLoginToggle] = useState(false);
-  const [signUpToggle, setSignUpToggle] = useState(false);
 
   return (
     <Flex
@@ -51,23 +48,14 @@ const Navbar = ({ user }) => {
           <DrawerCloseButton color="white" />
           <DrawerHeader textColor="white">Schmooze</DrawerHeader>
           <DrawerBody>
-            <Sidebar user={user} />
+            <HomeSidebar display={{ base: "flex", lg: "none" }} tags={tags} />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
 
-      <HStack spacing="1em">
-        {user && !loginToggle && !signUpToggle ? (
-          <UserDropdown user={user} />
-        ) : (
-          <>
-            <Login toggle={signUpToggle} setToggle={setSignUpToggle} />
-            <SignUp toggle={loginToggle} setToggle={setLoginToggle} />
-          </>
-        )}
-      </HStack>
+      {user ? <UserDropdown user={user} /> : <GuestDropdown />}
     </Flex>
   );
 };
 
-export default Navbar;
+export default HomeNavbar;
