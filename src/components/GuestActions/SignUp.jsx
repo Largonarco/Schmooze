@@ -48,6 +48,7 @@ const SignUp = () => {
             username: credentials.username,
             following: [],
             followers: [],
+            posts: []
           })
             .then(setToggle(!toggle))
             .catch((err) => setError(err.message))
@@ -128,7 +129,7 @@ const SignUp = () => {
                   : true
               }
               variant="solid"
-              colorScheme="purple"
+              colorScheme="brand"
               onClick={(e) => signUp(e)}
             >
               Submit

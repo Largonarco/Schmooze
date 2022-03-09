@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useState, useRef } from "react";
 import { db, storage } from "../../../config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -50,7 +51,7 @@ const CreatePost = ({ primaryUser }) => {
       body: post.body,
       tag: post.tag,
       likes: 0,
-      createdAt: serverTimestamp(),
+      createdAt: moment().unix(),
       comments: [],
       author: primaryUser.username,
     })

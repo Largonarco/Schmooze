@@ -7,9 +7,9 @@ const PostSkeletonCard = () => {
       p="0.5em"
       direction="column"
       gap="1em"
-      bgColor="gray.800"
+      bgColor="brand.800"
       borderWidth={1}
-      borderColor="purple.900"
+      borderColor="brand.400"
       borderRadius="0.5em"
     >
       <SkeletonCircle size="10" />

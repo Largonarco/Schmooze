@@ -1,6 +1,6 @@
-import moment from "moment";
 import UserPage from "../../components/UserPage/Page";
 import UserNavbar from "../../components/UserPage/Navbar";
+import { db } from "../../../config";
 import {
   collection,
   doc,
@@ -9,16 +9,15 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import React from "react";
-import { db } from "../../../config";
 
 import { Flex } from "@chakra-ui/react";
 
 const index = ({ primaryUser, secondaryUser, secondaryUserPosts }) => {
   return (
-    <Flex direction="column" bgColor="gray.900">
+    <Flex direction="column" bgColor="brand.900">
       <UserNavbar primaryUser={primaryUser} />
       <UserPage
+        primaryUser={primaryUser}
         secondaryUser={secondaryUser}
         secondaryUserPosts={secondaryUserPosts}
       />
@@ -36,7 +35,6 @@ export const getServerSideProps = async (context) => {
   let secondaryUserPosts = await getDocs(q);
   secondaryUserPosts = secondaryUserPosts.docs.map((rawPost) => ({
     ...rawPost.data(),
-    createdAt: moment(rawPost.data().createdAt.toDate()).fromNow(),
     id: rawPost.id,
   }));
 

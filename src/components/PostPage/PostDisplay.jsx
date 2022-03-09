@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useState, useEffect } from "react";
 import { db } from "../../../config";
 import {
@@ -9,15 +10,7 @@ import {
 } from "firebase/firestore";
 
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import {
-  Flex,
-  VStack,
-  Avatar,
-  Heading,
-  Text,
-  Textarea,
-  Button,
-} from "@chakra-ui/react";
+import { Flex, Heading, Text, Textarea, Button } from "@chakra-ui/react";
 
 const PostDisplay = ({ primaryUser, post }) => {
   const [liked, setLiked] = useState(false);
@@ -52,39 +45,39 @@ const PostDisplay = ({ primaryUser, post }) => {
 
   const onComment = async () => {
     await updateDoc(doc(db, "posts", post.id), {
-      comments: arrayUnion({ user: primaryUser.username, comment: userComment }),
+      comments: arrayUnion({
+        user: primaryUser.username,
+        comment: userComment,
+      }),
     });
   };
 
   return (
-    <Flex flex={{ base: 1, lg: 4 }} direction="column" gap="2em">
-      <Flex p="1em" gap="0.5em" bgColor="gray.800" boxShadow="xl" rounded="md">
-        <Avatar size="sm" name={post.author} alt={post.author} />
+    <Flex flex={{ base: 1, lg: 4 }} direction="column" gap="1em">
+      <Heading fontSize="lg" textColor="brand.50">
+        Post
+      </Heading>
 
+      <Flex p="1em" gap="0.5em" bgColor="brand.800" boxShadow="xl" rounded="md">
         <Flex width="100%" direction="column" gap="1em">
-          <VStack align="start" spacing={0} fontSize="sm">
-            <Text fontWeight="semibold" color="gray.500">
-              {post.author}
-            </Text>
-            <Text color="gray.500">{post.createdAt}</Text>
-          </VStack>
+          <Text textColor="brand.200">
+            Posted by {post.author} {moment.unix(post.createdAt).fromNow()}
+          </Text>
 
-          <Heading fontSize="2xl" textColor="white">
+          <Heading fontSize="2xl" textColor="brand.50">
             {post.title}
           </Heading>
 
-          <Text fontSize="md" textColor="whiteAlpha.800">
+          <Text fontSize="md" textColor="brand.50">
             {post.body}
           </Text>
         </Flex>
 
         <Button
-          _hover={{ bgColor: "gray.700" }}
-          _active={{ bgColor: "gray.700" }}
+          _hover={{ bgColor: "brand.700" }}
+          _active={{ bgColor: "brand.700" }}
           size="sm"
           variant="outline"
-          alignContent="center"
-          gap="1em"
           onClick={onLike}
         >
           {liked ? (
@@ -95,53 +88,57 @@ const PostDisplay = ({ primaryUser, post }) => {
         </Button>
       </Flex>
 
-      <Flex direction="column" gap="1em">
-        <Heading as="h3" size="md" textColor="white">
+      <Flex p="1em" direction="column" gap="1em">
+        <Heading as="h3" size="md" textColor="brand.50">
           Comments
         </Heading>
 
-        <Flex gap="1em">
-          <Textarea
-            size="sm"
-            textColor="white"
-            onChange={(e) => setUserComment(e.target.value)}
-          />
-          <Button
-            mt="auto"
-            width="max-content"
-            variant="solid"
-            colorScheme="purple"
-            onClick={onComment}
-          >
-            Submit
-          </Button>
-        </Flex>
+        {primaryUser != null && primaryUser != "unknown" ? (
+          <Flex gap="1em">
+            <Textarea
+              size="sm"
+              textColor="white"
+              onChange={(e) => setUserComment(e.target.value)}
+            />
+            <Button
+              mt="auto"
+              width="max-content"
+              variant="solid"
+              colorScheme="brand"
+              onClick={onComment}
+            >
+              Submit
+            </Button>
+          </Flex>
+        ) : null}
 
         {newComments.length != 0
-          ? newComments.map(({ comment, user }) => (
+          ? newComments.map(({ comment, user }, index) => (
               <Flex
+                key={index}
                 p="0.5em"
                 direction="column"
-                bgColor="gray.800"
+                bgColor="brand.800"
                 rounded="md"
               >
-                <Text fontWeight="semibold" color="gray.500">
+                <Text fontWeight="semibold" color="brand.200">
                   {user}
                 </Text>
-                <Text>{comment}</Text>
+                <Text textColor="brand.50">{comment}</Text>
               </Flex>
             ))
-          : post.comments.map(({ comment, user }) => (
+          : post.comments.map(({ comment, user }, index) => (
               <Flex
+                key={index}
                 p="0.5em"
                 direction="column"
-                bgColor="gray.800"
+                bgColor="brand.800"
                 rounded="md"
               >
-                <Text fontWeight="semibold" color="gray.500">
+                <Text fontWeight="semibold" color="brand.200">
                   {user}
                 </Text>
-                <Text>{comment}</Text>
+                <Text textColor="brand.50">{comment}</Text>
               </Flex>
             ))}
       </Flex>

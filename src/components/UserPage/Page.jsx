@@ -1,5 +1,7 @@
-import Link from "next/link"
 import moment from "moment";
+import Link from "next/link";
+import { db } from "../../../config";
+import { updateDoc, doc, arrayUnion } from "firebase/firestore";
 
 import { AiOutlineHeart, AiOutlineComment } from "react-icons/ai";
 import {
@@ -11,9 +13,19 @@ import {
   Text,
   Tag,
   Badge,
+  Button,
 } from "@chakra-ui/react";
 
-const UserPage = ({ secondaryUser, secondaryUserPosts }) => {
+const UserPage = ({ primaryUser, secondaryUser, secondaryUserPosts }) => {
+  const onFollow = async () => {
+    await updateDoc(doc(db, "users", secondaryUser.username), {
+      followers: arrayUnion(primaryUser.username),
+    });
+    await updateDoc(doc(db, "users", primaryUser.username), {
+      following: arrayUnion(secondaryUser.username),
+    });
+  };
+
   return (
     <Flex
       minH="100vh"
@@ -27,82 +39,89 @@ const UserPage = ({ secondaryUser, secondaryUserPosts }) => {
         p="1em"
         direction="column"
         gap="1em"
-        align="center"
-        bgColor="gray.800"
+        bgColor="brand.800"
+        borderWidth={1}
+        borderColor="brand.400"
+        borderRadius="0.5em"
       >
-        <Avatar name={secondaryUser.username} />
-        <Heading fontSize="2xl" textColor="white">
+        <Avatar size="lg" name={secondaryUser.username} />
+        <Heading fontSize="2xl" textColor="brand.50">
           {secondaryUser.username}
         </Heading>
 
         <HStack spacing="3em">
-          <Text color="gray.500">{secondaryUser.posts.length} posts</Text>
-          <Text color="gray.500">
+          <Text color="brand.200">{secondaryUser.posts.length} posts</Text>
+          <Text color="brand.200">
             {secondaryUser.followers.length} followers
           </Text>
-          <Text color="gray.500">
+          <Text color="brand.200">
             {secondaryUser.following.length} following
           </Text>
         </HStack>
+
+        <Button variant="solid" colorScheme="brand" onClick={onFollow}>
+          Follow
+        </Button>
       </Flex>
 
-      {secondaryUserPosts.map((post, index) => (
-        <Link key={index} href={`/post/${post.id}`}>
-          <Flex
-            p="1em"
-            gap="0.5em"
-            bgColor="gray.800"
-            boxShadow="xl"
-            rounded="md"
-          >
-            <Avatar size="sm" name={post.author} alt={post.author} />
+      <Flex direction="column" gap="1em">
+        {secondaryUserPosts.map((post, index) => (
+          <Link key={index} href={`/post/${post.id}`}>
+            <Flex
+              p="1em"
+              gap="0.5em"
+              bgColor="brand.800"
+              borderWidth={1}
+              borderColor="brand.400"
+              borderRadius="0.5em"
+            >
+              <Avatar size="sm" name={post.author} alt={post.author} />
 
-            <Flex width="100%" direction="column" gap="1em">
-              <HStack justify="space-between" align="center">
-                <HStack spacing="0.5em">
-                  <VStack align="start" spacing={0} fontSize="sm">
-                    <Text fontWeight="semibold" textColor="gray.500">
-                      {post.author}
-                    </Text>
-                    <Text textColor="gray.500">
-                      {post.createdAt}
-                    </Text>
-                  </VStack>
+              <Flex width="100%" direction="column" gap="0.5em">
+                <HStack justify="space-between" align="center">
+                  <HStack spacing="0.5em">
+                    <VStack align="start" spacing={0} fontSize="sm">
+                      <Text fontWeight="semibold" textColor="brand.200">
+                        {post.author}
+                      </Text>
+                      <Text textColor="brand.200">{moment.unix(post.createdAt).fromNow()}</Text>
+                    </VStack>
+                  </HStack>
                 </HStack>
-              </HStack>
 
-              <Heading textColor="white" fontSize="xl">
-                {post.title}
-              </Heading>
+                <Heading textColor="brand.50" fontSize="xl">
+                  {post.title}
+                </Heading>
 
-              <HStack spacing="1em">
-                <Tag
-                  size="md"
-                  gap="0.5em"
-                  bgColor="purple.900"
-                  variant="subtle"
-                >
-                  <AiOutlineHeart fill="pink" size={18} />
-                  <Text textColor="gray.500">{post.likes} </Text>
-                </Tag>
-                <Tag
-                  size="md"
-                  gap="0.5em"
-                  bgColor="purple.900"
-                  variant="subtle"
-                >
-                  <AiOutlineComment fill="green" size={18} />
-                  <Text textColor="gray.500">{post.comments.length} </Text>
-                </Tag>
-              </HStack>
+                <HStack spacing="1em">
+                  <Tag
+                    size="md"
+                    gap="0.5em"
+                    bgColor="brand.400"
+                    variant="subtle"
+                  >
+                    <AiOutlineHeart fill="pink" size={18} />
+                    <Text textColor="brand.200">{post.likes} </Text>
+                  </Tag>
+                  <Tag
+                    size="md"
+                    gap="0.5em"
+                    bgColor="brand.400"
+                    variant="subtle"
+                  >
+                    <AiOutlineComment fill="green" size={18} />
+                    <Text textColor="brand.200">{post.comments.length} </Text>
+                  </Tag>
+                </HStack>
+              </Flex>
+
+              <Badge height="max-content" variant="outline" colorScheme="brand">
+                #{post.tag}
+              </Badge>
             </Flex>
-
-            <Badge height="max-content" variant="outline" colorScheme="purple">
-              #{post.tag}
-            </Badge>
-          </Flex>
-        </Link>
-      ))}
+          </Link>
+        ))}
+      </Flex>
     </Flex>
   );
 };

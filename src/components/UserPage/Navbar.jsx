@@ -13,9 +13,9 @@ const UserNavbar = ({ primaryUser }) => {
       zIndex={50}
       justify="space-between"
       align="center"
-      bgColor="gray.800"
+      bgColor="brand.800"
       borderBottom="1px"
-      borderColor="purple.900"
+      borderColor="brand.400"
     >
       <Heading as="h1" size="lg" fontWeight="bold" textColor="white">
         Schmooze

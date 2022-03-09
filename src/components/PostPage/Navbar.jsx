@@ -28,9 +28,9 @@ const PostNavbar = ({ primaryUser, postAuthor }) => {
       zIndex={50}
       justify="space-between"
       align="center"
-      bgColor="gray.800"
+      bgColor="brand.800"
       borderBottom="1px"
-      borderColor="purple.900"
+      borderColor="brand.400"
     >
       <Button display={{ lg: "none" }} onClick={onOpen}>
         <FiMenu />

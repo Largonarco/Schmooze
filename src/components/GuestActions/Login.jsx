@@ -96,7 +96,7 @@ const Login = () => {
                 credentials.email && credentials.password ? false : true
               }
               variant="solid"
-              colorScheme="purple"
+              colorScheme="brand"
               onClick={(e) => login(e)}
             >
               Submit

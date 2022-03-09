@@ -1,3 +1,4 @@
+import moment from "moment";
 import HomeNavbar from "../components/HomePage/Navbar";
 import HomePage from "../components/HomePage/Page";
 import { splitArrayby10 } from "../../utils";
@@ -7,8 +8,8 @@ import {
   collection,
   getDocs,
   limit,
+  orderBy,
   query,
-  Timestamp,
   where,
 } from "firebase/firestore";
 
@@ -26,15 +27,8 @@ const index = ({ primaryUser }) => {
       if (primaryUser && primaryUser.following.length != 0) {
         const usernameSet = splitArrayby10(primaryUser.following);
 
-        usernameSet.forEach((username) => {
-          const q = query(
-            postsRef,
-            where("author", "in", username),
-            where("createdAt", ">", {
-              seconds: Timestamp.now().seconds - 172800,
-              nanoseconds: Timestamp.now().nanoseconds,
-            })
-          );
+        usernameSet.forEach((set) => {
+          const q = query(postsRef, where("author", "in", set));
 
           getDocs(q)
             .then((data) => {
@@ -77,7 +71,7 @@ const index = ({ primaryUser }) => {
   }, [primaryUser]);
 
   return (
-    <Flex direction="column" bgColor="gray.900">
+    <Flex direction="column" bgColor="brand.900">
       <HomeNavbar primaryUser={primaryUser} tags={tags} />
       <HomePage posts={posts} tags={tags} error={error} />
     </Flex>

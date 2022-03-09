@@ -11,12 +11,12 @@ const PostFeed = ({ posts }) => {
       gap="1em"
       overflowY="auto"
     >
-      <Heading fontSize="lg" textColor="white">
+      <Heading fontSize="lg" textColor="brand.50">
         Posts
       </Heading>
 
       {posts.length != 0 ? (
-        posts.map((post, index) => <PostCard post={post} index={index} />)
+        posts.map((post, index) => <PostCard post={post} key={index} />)
       ) : (
         <>
           <PostSkeletonCard />
